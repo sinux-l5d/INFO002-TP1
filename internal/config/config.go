@@ -2,10 +2,13 @@ package config
 
 import (
 	"fmt"
-	"io"
 	"math"
 	"sort"
 	"strings"
+)
+
+var (
+	GlobalConfig Config = Config{}
 )
 
 var alphabets = map[string]string{
@@ -33,11 +36,6 @@ type Config struct {
 	Abc            string `json:"abc"`
 	Size           int    `json:"size"`
 	Verbose        bool   `json:"verbose"`
-	Writer         io.Writer
-}
-
-func (c Config) Printf(format string, a ...interface{}) (n int, err error) {
-	return c.Writer.Write([]byte(fmt.Sprintf(format, a...)))
 }
 
 func (c Config) N() int {

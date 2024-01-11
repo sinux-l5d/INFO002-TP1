@@ -13,7 +13,6 @@ const (
 )
 
 var (
-	cfg = config.Config{}
 	app = &cli.App{
 		Name:  "rbt",
 		Usage: "Programme to manage a rainbow table",
@@ -22,26 +21,26 @@ var (
 				Name:        "alphabet",
 				Usage:       "Alphabet to use",
 				Value:       "abcdefghijklmnopqrstuvwxyz",
-				Destination: &cfg.CustomAlphabet,
+				Destination: &config.GlobalConfig.CustomAlphabet,
 			},
 			&cli.StringFlag{
 				Name:        "abc",
 				Aliases:     []string{"A"},
 				Usage:       "Select a predefined alphabet. Possible values:\n" + config.Alphabets(),
-				Destination: &cfg.Abc,
+				Destination: &config.GlobalConfig.Abc,
 			},
 			&cli.IntFlag{
 				Name:        "size",
 				Aliases:     []string{"s"},
 				Usage:       "Size of the strings to generate",
 				Value:       4,
-				Destination: &cfg.Size,
+				Destination: &config.GlobalConfig.Size,
 			},
 			&cli.BoolFlag{
 				Name:        "verbose",
 				Aliases:     []string{"v"},
 				Usage:       "Verbose mode",
-				Destination: &cfg.Verbose,
+				Destination: &config.GlobalConfig.Verbose,
 			},
 		},
 	}
@@ -52,7 +51,6 @@ func RegisterSubCmd(cmd *cli.Command) {
 }
 
 func main() {
-	cfg.Writer = app.Writer
 	if err := app.Run(os.Args); err != nil {
 		log.Fatal(err)
 	}

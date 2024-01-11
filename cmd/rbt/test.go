@@ -3,17 +3,22 @@ package main
 import (
 	"errors"
 	"fmt"
+	"strconv"
 
+	"github.com/sinux-l5d/INFO002-TP1/internal/config"
 	"github.com/sinux-l5d/INFO002-TP1/internal/tests"
 	"github.com/urfave/cli/v2"
 )
 
 func init() {
 	RegisterSubCmd(&cli.Command{
-		Name:        "test",
-		Usage:       "Run a test",
-		UsageText:   progname + " [global options] test <test name>",
-		Subcommands: []*cli.Command{hash, globconfig},
+		Name:      "test",
+		Usage:     "Run a test",
+		UsageText: progname + " [global options] test <test name>",
+		Subcommands: []*cli.Command{
+			hash,
+			i2c,
+			globconfig},
 	})
 }
 
@@ -44,7 +49,7 @@ var (
 			}
 
 			// TEST
-			test, err := tests.NewHashTest(cfg, c.String("algo"), toHash)
+			test, err := tests.NewHashTest(&config.GlobalConfig, c.String("algo"), toHash)
 			if err != nil {
 				return err
 			}
@@ -57,8 +62,36 @@ var (
 		Name:  "config",
 		Usage: "Print the current configuration",
 		Action: func(c *cli.Context) error {
-			fmt.Println(cfg.String())
+			fmt.Println(config.GlobalConfig.String())
 			return nil
+		},
+	}
+
+	i2c = &cli.Command{
+		Name:      "i2c",
+		Usage:     "Number to combination",
+		ArgsUsage: "<number>",
+		Action: func(c *cli.Context) error {
+			// VALIDATE
+			if c.Args().First() == "" {
+				cli.ShowSubcommandHelp(c)
+				return errors.New("missing the number")
+			}
+
+			// Convert string to int
+			n, err := strconv.Atoi(c.Args().First())
+			if err != nil {
+				cli.ShowSubcommandHelp(c)
+				return errors.New("invalid number")
+			}
+
+			// TEST
+			test, err := tests.NewI2CTest(&config.GlobalConfig, n)
+			if err != nil {
+				return err
+			}
+
+			return test.Run()
 		},
 	}
 )
