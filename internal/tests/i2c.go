@@ -36,6 +36,9 @@ func (t *I2CTest) Run() error {
 	r := ""
 	s := len(t.config.Alphabet())
 	for k := t.config.Size - 1; k >= 0; k-- {
+		if t.config.Verbose {
+			fmt.Printf("i2c(%d,%d,%d)=%d=%s\n", t.n, k, s, ik(t.n, k, s), string(t.config.Alphabet()[ik(t.n, k, s)]))
+		}
 		r += string(t.config.Alphabet()[ik(t.n, k, s)])
 	}
 	fmt.Printf("i2c(%d)=%s\n", t.n, r)
