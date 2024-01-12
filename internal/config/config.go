@@ -38,8 +38,8 @@ type Config struct {
 	Verbose        bool   `json:"verbose"`
 }
 
-func (c Config) N() int {
-	return int(math.Pow(float64(len(c.Alphabet())), float64(c.Size)))
+func (c Config) N() uint64 {
+	return uint64(math.Pow(float64(len(c.Alphabet())), float64(c.Size)))
 }
 
 func (c Config) Alphabet() string {

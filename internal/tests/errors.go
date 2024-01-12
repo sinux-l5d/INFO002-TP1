@@ -3,8 +3,8 @@ package tests
 import "fmt"
 
 type BoundaryError struct {
-	Min int
-	Max int
+	Min uint64
+	Max uint64
 }
 
 func (e BoundaryError) Error() string {

@@ -18,6 +18,8 @@ func init() {
 		Subcommands: []*cli.Command{
 			hash,
 			i2c,
+			h2i,
+			i2i,
 			globconfig},
 	})
 }
@@ -54,7 +56,13 @@ var (
 				return err
 			}
 
-			return test.Run()
+			// PRINT
+			r, err := test.Run()
+			if err != nil {
+				return err
+			}
+			fmt.Printf("%X (%s)\n", r, toHash)
+			return nil
 		},
 	}
 
@@ -68,9 +76,10 @@ var (
 	}
 
 	i2c = &cli.Command{
-		Name:      "i2c",
-		Usage:     "Number to combination",
-		ArgsUsage: "<number>",
+		Name:        "i2c",
+		Usage:       "Index to combination",
+		Description: "Transform the input number into the corresponding combination, depending on the alphabet in global options",
+		ArgsUsage:   "<index>",
 		Action: func(c *cli.Context) error {
 			// VALIDATE
 			if c.Args().First() == "" {
@@ -79,7 +88,7 @@ var (
 			}
 
 			// Convert string to int
-			n, err := strconv.Atoi(c.Args().First())
+			n, err := strconv.ParseUint(c.Args().First(), 10, 64)
 			if err != nil {
 				cli.ShowSubcommandHelp(c)
 				return errors.New("invalid number")
@@ -91,7 +100,103 @@ var (
 				return err
 			}
 
-			return test.Run()
+			// PRINT
+			r, err := test.Run()
+			if err != nil {
+				return err
+			}
+			fmt.Printf("i2c(%d)=%s\n", n, r)
+			return nil
+		},
+	}
+
+	h2i = &cli.Command{
+		Name:        "h2i",
+		Usage:       "Hash to index",
+		Description: "Transform the input hexadecimal hash into a number for the given column (don't forget global options...)",
+		ArgsUsage:   "<hash> <column>",
+		Action: func(c *cli.Context) error {
+			// VALIDATE
+			if c.Args().First() == "" {
+				cli.ShowSubcommandHelp(c)
+				return errors.New("missing the string")
+			}
+			str := c.Args().First()
+
+			if c.Args().Get(1) == "" {
+				cli.ShowSubcommandHelp(c)
+				return errors.New("missing the column number")
+			}
+
+			// Convert string to int
+			i := c.Args().Get(1)
+			t, err := strconv.Atoi(i)
+			if err != nil || t < 0 {
+				cli.ShowSubcommandHelp(c)
+				return errors.New("invalid column number")
+			}
+
+			// TEST
+			test, err := tests.NewH2ITest(&config.GlobalConfig, str, t)
+			if err != nil {
+				return err
+			}
+
+			// PRINT
+			r, err := test.Run()
+			if err != nil {
+				return err
+			}
+			fmt.Printf("h2i(sha1(%s),%d)=%d\n", str, t, r)
+			return nil
+		},
+	}
+
+	i2i = &cli.Command{
+		Name:        "i2i",
+		Usage:       "Number to number",
+		Description: "Convert a number to text that is hashed, then convert if back to another number for the given column (don't forget global options...)",
+		ArgsUsage:   "<number> <column>",
+		Action: func(c *cli.Context) error {
+			// VALIDATE
+			if c.Args().First() == "" {
+				cli.ShowSubcommandHelp(c)
+				return errors.New("missing the number")
+			}
+
+			// Convert string to int
+			n, err := strconv.ParseUint(c.Args().First(), 10, 64)
+			if err != nil {
+				cli.ShowSubcommandHelp(c)
+				return fmt.Errorf("invalid number: %v", err)
+			}
+
+			if c.Args().Get(1) == "" {
+				cli.ShowSubcommandHelp(c)
+				return errors.New("missing the column number")
+			}
+
+			// Convert string to int
+			i := c.Args().Get(1)
+			t, err := strconv.Atoi(i)
+			if err != nil || t < 0 {
+				cli.ShowSubcommandHelp(c)
+				return errors.New("invalid column number")
+			}
+
+			// TEST
+			test, err := tests.NewI2ITest(&config.GlobalConfig, n, t)
+			if err != nil {
+				return err
+			}
+
+			// PRINT
+			r, err := test.Run()
+			if err != nil {
+				return err
+			}
+			fmt.Printf("i2i(%d,%d)=%d\n", n, t, r)
+			return nil
 		},
 	}
 )

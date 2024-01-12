@@ -3,7 +3,6 @@ package tests
 import (
 	"crypto/sha1"
 	"errors"
-	"fmt"
 
 	"github.com/sinux-l5d/INFO002-TP1/internal/config"
 )
@@ -32,12 +31,11 @@ func NewHashTest(cfg *config.Config, alg string, str string) (*HashTest, error) 
 	}, nil
 }
 
-func (t *HashTest) Run() error {
+func (t *HashTest) Run() ([]byte, error) {
 	if t.alg != "sha1" {
-		return errors.New("unsupported algorithm")
+		return nil, errors.New("unsupported algorithm")
 	}
 	h := sha1.New()
 	h.Write([]byte(t.str))
-	fmt.Printf("%X (%s)\n", h.Sum(nil), t.str)
-	return nil
+	return h.Sum(nil), nil
 }
