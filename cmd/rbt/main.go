@@ -33,7 +33,7 @@ var (
 				Name:        "size",
 				Aliases:     []string{"s"},
 				Usage:       "Size of the strings to generate",
-				Value:       4,
+				Value:       5,
 				Destination: &config.GlobalConfig.Size,
 			},
 			&cli.BoolFlag{

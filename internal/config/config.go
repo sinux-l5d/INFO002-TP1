@@ -55,5 +55,5 @@ func (c Config) Alphabet() string {
 }
 
 func (c Config) String() string {
-	return fmt.Sprintf("alphabet: %s\nsize: %d\nN: %d\nverbose: %t\n", c.Alphabet(), c.Size, c.N(), c.Verbose)
+	return fmt.Sprintf("alphabet: %s\nsize: %d\nN: %d\nverbose: %t", c.Alphabet(), c.Size, c.N(), c.Verbose)
 }
