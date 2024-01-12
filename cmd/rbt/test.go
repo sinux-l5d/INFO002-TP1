@@ -130,7 +130,7 @@ var (
 
 			// Convert string to int
 			i := c.Args().Get(1)
-			t, err := strconv.Atoi(i)
+			t, err := strconv.ParseUint(i, 10, 64)
 			if err != nil || t < 0 {
 				cli.ShowSubcommandHelp(c)
 				return errors.New("invalid column number")
@@ -178,7 +178,7 @@ var (
 
 			// Convert string to int
 			i := c.Args().Get(1)
-			t, err := strconv.Atoi(i)
+			t, err := strconv.ParseUint(i, 10, 64)
 			if err != nil || t < 0 {
 				cli.ShowSubcommandHelp(c)
 				return errors.New("invalid column number")

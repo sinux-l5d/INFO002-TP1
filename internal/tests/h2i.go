@@ -13,10 +13,10 @@ type H2ITest struct {
 	config *config.Config
 	hash   string
 	// numéro de la colonne
-	c int
+	c uint64
 }
 
-func NewH2ITest(cfg *config.Config, hash string, c int) (*H2ITest, error) {
+func NewH2ITest(cfg *config.Config, hash string, c uint64) (*H2ITest, error) {
 	if hash == "" {
 		return nil, errors.New("empty string")
 	}
@@ -33,5 +33,5 @@ func (t *H2ITest) Run() (uint64, error) {
 		return 0, fmt.Errorf("invalid hash: %w", err)
 	}
 
-	return (binary.LittleEndian.Uint64(H[:8]) + uint64(t.c)) % uint64(t.config.N()), nil
+	return (binary.LittleEndian.Uint64(H[:8]) + t.c) % uint64(t.config.N()), nil
 }

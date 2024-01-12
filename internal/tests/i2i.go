@@ -10,10 +10,10 @@ type I2ITest struct {
 	config *config.Config
 	i      uint64
 	// numéro de la colonne
-	c int
+	c uint64
 }
 
-func NewI2ITest(cfg *config.Config, i uint64, c int) (*I2ITest, error) {
+func NewI2ITest(cfg *config.Config, i uint64, c uint64) (*I2ITest, error) {
 	return &I2ITest{
 		config: cfg,
 		i:      i,

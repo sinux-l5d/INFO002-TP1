@@ -11,10 +11,10 @@ import (
 	"github.com/sinux-l5d/INFO002-TP1/internal/tests"
 )
 
-func nouvelle_chaine(config *config.Config, idx uint64, largeur int) (uint64, error) {
+func nouvelle_chaine(config *config.Config, idx uint64, largeur uint64) (uint64, error) {
 	id := idx
 
-	for i := 0; i < largeur-1; i++ {
+	for i := uint64(0); i < largeur-1; i++ {
 		i2i, err := tests.NewI2ITest(config, id, i+1)
 		if err != nil {
 			return 0, err
@@ -63,7 +63,7 @@ func NewTable(config *config.Config, largeur uint64, hauteur uint64, random bool
 
 		// FILL
 		var err error
-		T[i][1], err = nouvelle_chaine(config, T[i][0], int(largeur))
+		T[i][1], err = nouvelle_chaine(config, T[i][0], largeur)
 		if err != nil {
 			return table{}, nil
 		}
