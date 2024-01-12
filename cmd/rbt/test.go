@@ -36,6 +36,11 @@ var (
 				Usage:   "Hash algorithm. Options : sha1",
 				Value:   "sha1",
 			},
+			&cli.BoolFlag{
+				Name:    "lowercase",
+				Aliases: []string{"l"},
+				Usage:   "Lowercase the resulting hash",
+			},
 		},
 		ArgsUsage: "<string to hash>",
 		Action: func(c *cli.Context) error {
@@ -61,6 +66,12 @@ var (
 			if err != nil {
 				return err
 			}
+
+			if c.Bool("lowercase") {
+				fmt.Printf("%x (%s)\n", r, toHash)
+				return nil
+			}
+
 			fmt.Printf("%X (%s)\n", r, toHash)
 			return nil
 		},
@@ -131,7 +142,7 @@ var (
 			// Convert string to int
 			i := c.Args().Get(1)
 			t, err := strconv.ParseUint(i, 10, 64)
-			if err != nil || t < 0 {
+			if err != nil {
 				cli.ShowSubcommandHelp(c)
 				return errors.New("invalid column number")
 			}
@@ -179,7 +190,7 @@ var (
 			// Convert string to int
 			i := c.Args().Get(1)
 			t, err := strconv.ParseUint(i, 10, 64)
-			if err != nil || t < 0 {
+			if err != nil {
 				cli.ShowSubcommandHelp(c)
 				return errors.New("invalid column number")
 			}

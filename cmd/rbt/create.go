@@ -46,7 +46,7 @@ func init() {
 
 			// CREATE TABLE
 
-			t, err := table.NewTable(&config.GlobalConfig, largeur, hauteur, random)
+			t, err := table.NewTable(config.GlobalConfig, largeur, hauteur, random)
 			if err != nil {
 				return err
 			}

@@ -50,7 +50,9 @@ func (c Config) Alphabet() string {
 		}
 		return abc
 	}
-
+	if c.CustomAlphabet == "" {
+		panic("no alphabet")
+	}
 	return c.CustomAlphabet
 }
 

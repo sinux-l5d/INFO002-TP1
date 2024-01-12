@@ -41,29 +41,29 @@ func index_aleatoire(config *config.Config) uint64 {
 }
 
 type table struct {
-	Alphabet string
-	Size     int
-	Hauteur  uint64
-	Largeur  uint64
+	Config  config.Config
+	Hauteur uint64
+	Largeur uint64
+	Random  bool
 
 	Data [][]uint64
 }
 
-func NewTable(config *config.Config, largeur uint64, hauteur uint64, random bool) (table, error) {
+func NewTable(config config.Config, largeur uint64, hauteur uint64, random bool) (table, error) {
 	T := make([][]uint64, hauteur)
 
 	for i := range T {
 		// INIT
 		T[i] = make([]uint64, 2)
 		if random {
-			T[i][0] = index_aleatoire(config)
+			T[i][0] = index_aleatoire(&config)
 		} else {
 			T[i][0] = uint64(i)
 		}
 
 		// FILL
 		var err error
-		T[i][1], err = nouvelle_chaine(config, T[i][0], largeur)
+		T[i][1], err = nouvelle_chaine(&config, T[i][0], largeur)
 		if err != nil {
 			return table{}, nil
 		}
@@ -74,11 +74,11 @@ func NewTable(config *config.Config, largeur uint64, hauteur uint64, random bool
 	})
 
 	return table{
-		Alphabet: config.Alphabet(),
-		Size:     config.Size,
-		Largeur:  largeur,
-		Hauteur:  hauteur,
-		Data:     T,
+		Config:  config,
+		Largeur: largeur,
+		Hauteur: hauteur,
+		Data:    T,
+		Random:  random,
 	}, nil
 }
 
@@ -99,6 +99,7 @@ func (t table) Save(filename string) error {
 	return nil
 }
 
+// Load a table with it's own configuration
 func Load(filename string) (table, error) {
 	file, err := os.Open(filename)
 	if err != nil {

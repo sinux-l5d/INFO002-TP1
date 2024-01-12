@@ -39,10 +39,12 @@ func init() {
 			}
 
 			fmt.Printf("== Table %s ==\n", filename)
-			fmt.Printf("Width: %d\n", t.Largeur)
-			fmt.Printf("Height: %d\n", t.Hauteur)
-			fmt.Printf("Alphabet: %s\n", t.Alphabet)
-			fmt.Printf("Size: %d\n", t.Size)
+			// fmt.Printf("Alphabet: %s\n", t.Alphabet)
+			// fmt.Printf("Size: %d\n", t.Size)
+			fmt.Println(t.Config.String())
+			fmt.Printf("width: %d\n", t.Largeur)
+			fmt.Printf("height: %d\n", t.Hauteur)
+			fmt.Printf("random: %t\n", t.Random)
 
 			limit := c.Int("max")
 			if c.Bool("all") {
