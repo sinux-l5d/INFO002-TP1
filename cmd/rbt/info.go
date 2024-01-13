@@ -15,9 +15,12 @@ func init() {
 		ArgsUsage: "<filename>",
 		Flags: []cli.Flag{
 			&cli.BoolFlag{
-				Name:    "all",
-				Aliases: []string{"a"},
-				Usage:   "Print all the content of the table",
+				Name:  "all",
+				Usage: "Print all the content of the table",
+			},
+			&cli.BoolFlag{
+				Name:  "none",
+				Usage: "Don't print the content of the table",
 			},
 			&cli.IntFlag{
 				Name:    "max",
@@ -48,6 +51,10 @@ func init() {
 			fmt.Printf("width: %d\n", t.Largeur)
 			fmt.Printf("height: %d\n", t.Hauteur)
 			fmt.Printf("random: %t\n", t.Random)
+
+			if c.Bool("none") {
+				return nil
+			}
 
 			limit := c.Int("max")
 			if c.Bool("all") {
