@@ -2,23 +2,21 @@ package tests
 
 import (
 	"encoding/binary"
-	"encoding/hex"
 	"errors"
-	"fmt"
 
 	"github.com/sinux-l5d/INFO002-TP1/internal/config"
 )
 
 type H2ITest struct {
 	config *config.Config
-	hash   string
+	hash   []byte
 	// numéro de la colonne
 	c uint64
 }
 
-func NewH2ITest(cfg *config.Config, hash string, c uint64) (*H2ITest, error) {
-	if hash == "" {
-		return nil, errors.New("empty string")
+func NewH2ITest(cfg *config.Config, hash []byte, c uint64) (*H2ITest, error) {
+	if len(hash) != 20 {
+		return nil, errors.New("invalid hash length for sha1")
 	}
 	return &H2ITest{
 		config: cfg,
@@ -27,11 +25,6 @@ func NewH2ITest(cfg *config.Config, hash string, c uint64) (*H2ITest, error) {
 	}, nil
 }
 
-func (t *H2ITest) Run() (uint64, error) {
-	H, err := hex.DecodeString(t.hash)
-	if err != nil {
-		return 0, fmt.Errorf("invalid hash: %w", err)
-	}
-
-	return (binary.LittleEndian.Uint64(H[:8]) + t.c) % uint64(t.config.N()), nil
+func (t H2ITest) Run() (uint64, error) {
+	return (binary.LittleEndian.Uint64(t.hash[:8]) + t.c) % uint64(t.config.N()), nil
 }

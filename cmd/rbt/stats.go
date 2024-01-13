@@ -18,8 +18,7 @@ func init() {
 			"If the width and height are given, global parameters are used.",
 		ArgsUsage: "[<filename>|<width> <height>]",
 		Action: func(c *cli.Context) error {
-			// VALIDATE
-			if c.Args().Len() == 1 {
+			if c.Args().Len() == 1 { // filename
 				filename := c.Args().Get(0)
 				t, err := table.Load(filename)
 				if err != nil {
@@ -27,7 +26,7 @@ func init() {
 				}
 				fmt.Println(t.Config.String())
 				fmt.Printf("Coverage: %.2f%%", t.Coverage())
-			} else if c.Args().Len() == 2 {
+			} else if c.Args().Len() == 2 { // width height
 				widthS := c.Args().Get(0)
 				width, err := strconv.ParseUint(widthS, 10, 64)
 				if err != nil {
@@ -42,7 +41,7 @@ func init() {
 
 				fmt.Println(config.GlobalConfig.String())
 				fmt.Printf("Coverage: %.2f%%", table.Coverage(config.GlobalConfig, width, height))
-			} else {
+			} else { // no args, too many args
 				cli.ShowSubcommandHelp(c)
 				return fmt.Errorf("missing arguments")
 			}

@@ -1,6 +1,7 @@
 package main
 
 import (
+	"encoding/hex"
 	"errors"
 	"fmt"
 	"strconv"
@@ -148,7 +149,12 @@ var (
 			}
 
 			// TEST
-			test, err := tests.NewH2ITest(&config.GlobalConfig, str, t)
+			hash, err := hex.DecodeString(str)
+			if err != nil {
+				return fmt.Errorf("invalid hash: %v", err)
+			}
+
+			test, err := tests.NewH2ITest(&config.GlobalConfig, hash, t)
 			if err != nil {
 				return err
 			}

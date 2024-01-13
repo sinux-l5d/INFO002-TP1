@@ -1,8 +1,6 @@
 package tests
 
 import (
-	"fmt"
-
 	"github.com/sinux-l5d/INFO002-TP1/internal/config"
 )
 
@@ -42,7 +40,7 @@ func (t *I2ITest) Run() (uint64, error) {
 		return 0, err
 	}
 
-	h2i, err := NewH2ITest(t.config, fmt.Sprintf("%x", hash), t.c)
+	h2i, err := NewH2ITest(t.config, hash, t.c)
 	if err != nil {
 		return 0, err
 	}
