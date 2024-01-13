@@ -27,20 +27,23 @@ func init() {
 			},
 		},
 		Action: func(c *cli.Context) error {
+			// VALIDATE
 			filename := c.Args().Get(0)
 			if filename == "" {
 				cli.ShowSubcommandHelp(c)
 				return errors.New("missing arguments")
 			}
 
+			// LOAD
+
 			t, err := table.Load(filename)
 			if err != nil {
 				return err
 			}
 
+			// PRINT
+
 			fmt.Printf("== Table %s ==\n", filename)
-			// fmt.Printf("Alphabet: %s\n", t.Alphabet)
-			// fmt.Printf("Size: %d\n", t.Size)
 			fmt.Println(t.Config.String())
 			fmt.Printf("width: %d\n", t.Largeur)
 			fmt.Printf("height: %d\n", t.Hauteur)

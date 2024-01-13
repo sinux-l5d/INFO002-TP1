@@ -23,3 +23,7 @@ SKIPPED
 *En quoi est-ce que l'ajout du paramètre t dans la fonction h2i permet d'augmenter la couverture de la table ?*
 
 Le paramètre t permet de limiter les collisions. Si nous avons moins de collisions, nous augmentons le nombre de valeurs différentes et donc la converture de la table.
+
+## Question 12
+
+*Estimez la complexité de la recherche dans une table arc-en-ciel.*
