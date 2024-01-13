@@ -5,6 +5,8 @@ import (
 	"encoding/hex"
 	"errors"
 	"fmt"
+	"sync"
+	"sync/atomic"
 
 	"github.com/sinux-l5d/INFO002-TP1/internal/tests"
 )
@@ -19,29 +21,74 @@ func (tab table) Crack(hash string) (clair string, err error) {
 			err = fmt.Errorf("error cracking hash %s: %v", hash, r)
 		}
 	}()
+
 	H, err := hex.DecodeString(hash)
 	if err != nil {
 		return "", err
 	}
 
-	for t := tab.Largeur - 1; t > 0; t-- {
-		idx := tab.h2i(H, t)
+	var wg sync.WaitGroup
+	resultCh := make(chan string, 1)
+	stopCh := make(chan struct{})
+	var stopChClosed int32 // Indicateur atomique pour éviter la fermeture multiple du channel stopCh
 
-		for i := t + 1; i < tab.Largeur; i++ {
-			idx = tab.i2i(idx, i)
-		}
-		a, b, ok := recherche(tab, tab.Hauteur, idx)
-		if !ok {
-			continue
-		}
-		for i := a; i <= b; i++ {
-			clair, ok := tab.verifie_candidat(H, t, tab.Data[i][0])
-			if ok {
-				return clair, nil
+	for t := tab.Largeur - 1; t > 0; t-- {
+		wg.Add(1)
+		go func(t uint64) {
+			defer wg.Done()
+
+			idx := tab.h2i(H, t)
+
+			for i := t + 1; i < tab.Largeur; i++ {
+				idx = tab.i2i(idx, i)
 			}
-		}
+
+			select {
+			case <-stopCh:
+				// Une solution a déjà été trouvée, arrêter cette goroutine
+				return
+			default:
+			}
+
+			a, b, ok := recherche(tab, tab.Hauteur, idx)
+			if !ok {
+				return
+			}
+
+			for i := a; i <= b; i++ {
+				clair, ok := tab.verifie_candidat(H, t, tab.Data[i][0])
+				if ok {
+					select {
+					case resultCh <- clair:
+						// Une solution a été trouvée, signaler aux autres goroutines de s'arrêter
+						// On ferme le channel que si ce n'est pas déjà fait
+						if atomic.CompareAndSwapInt32(&stopChClosed, 0, 1) {
+							close(stopCh)
+						}
+					default:
+					}
+					return
+				}
+			}
+		}(t)
 	}
-	return "", errors.New("not found")
+
+	go func() {
+		wg.Wait()
+		close(resultCh)
+		// On ferme le channel que si ce n'est pas déjà fait
+		if atomic.CompareAndSwapInt32(&stopChClosed, 0, 1) {
+			close(stopCh)
+		}
+	}()
+
+	// If all goroutines are done unsuccessfully, it returns an error because the channel stopCh is closed and resultCh is empty
+	select {
+	case clair := <-resultCh:
+		return clair, nil
+	case <-stopCh:
+		return "", errors.New("not found")
+	}
 }
 
 // vérifie si un candidat est correct
