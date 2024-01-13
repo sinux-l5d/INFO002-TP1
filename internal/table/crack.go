@@ -97,17 +97,17 @@ func recherche(tab table, hauteur uint64, idx uint64) (uint64, uint64, error) {
 
 	for a <= b {
 		m := (a + b) / 2
-		if uint64(tab.Data[m][1]) == idx {
+		if tab.Data[m][1] == idx {
 			a = m
 			b = m
-			for a > 0 && uint64(tab.Data[a-1][1]) == idx {
+			for a > 0 && tab.Data[a-1][1] == idx {
 				a--
 			}
-			for b < hauteur-1 && uint64(tab.Data[b+1][1]) == idx {
+			for b < hauteur-1 && tab.Data[b+1][1] == idx {
 				b++
 			}
 			return a, b, nil
-		} else if uint64(tab.Data[m][1]) < idx {
+		} else if tab.Data[m][1] < idx {
 			a = m + 1
 		} else {
 			b = m - 1

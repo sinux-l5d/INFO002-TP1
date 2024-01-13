@@ -15,10 +15,10 @@ var alphabets = map[string]string{
 	"26":  "abcdefghijklmnopqrstuvwxyz",
 	"26A": "ABCDEFGHIJKLMNOPQRSTUVWXYZ",
 	"36":  "abcdefghijklmnopqrstuvwxyz0123456789",
-	"40":  "abcdefghijklmnopqrstuvwxyz0123456789,;:$",
+	"40":  "abcdefghijklmnopqrstuvwxyz0123456789,;:$.",
 	"52":  "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz",
 	"62":  "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz",
-	"66":  "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz,;:$",
+	"66":  "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz,;:$.",
 }
 
 // meant for CLI help
