@@ -23,7 +23,6 @@ func (tab table) Crack(hash string) (clair string, err error) {
 	if err != nil {
 		return "", err
 	}
-	nb_candidats := 0
 
 	for t := tab.Largeur - 1; t > 0; t-- {
 		idx := tab.h2i(H, t)
@@ -31,17 +30,14 @@ func (tab table) Crack(hash string) (clair string, err error) {
 		for i := t + 1; i < tab.Largeur; i++ {
 			idx = tab.i2i(idx, i)
 		}
-		a, b, err := recherche(tab, tab.Hauteur, idx)
-		if err != nil {
+		a, b, ok := recherche(tab, tab.Hauteur, idx)
+		if !ok {
 			continue
 		}
-		// fmt.Printf("t=%d, idx=%d, a=%d, b=%d, candidats=%d\n", t, idx, a, b, b-a+1)
 		for i := a; i <= b; i++ {
 			clair, ok := tab.verifie_candidat(H, t, tab.Data[i][0])
 			if ok {
 				return clair, nil
-			} else {
-				nb_candidats++
 			}
 		}
 	}
@@ -91,7 +87,7 @@ func (tab table) verifie_candidat(hash []byte, t uint64, candidat uint64) (strin
 //		}
 //		return a, c - 1, nil
 //	}
-func recherche(tab table, hauteur uint64, idx uint64) (uint64, uint64, error) {
+func recherche(tab table, hauteur uint64, idx uint64) (uint64, uint64, bool) {
 	a := uint64(0)
 	b := hauteur - 1
 
@@ -106,14 +102,17 @@ func recherche(tab table, hauteur uint64, idx uint64) (uint64, uint64, error) {
 			for b < hauteur-1 && tab.Data[b+1][1] == idx {
 				b++
 			}
-			return a, b, nil
+			return a, b, true
 		} else if tab.Data[m][1] < idx {
 			a = m + 1
 		} else {
+			if m == 0 {
+				break
+			}
 			b = m - 1
 		}
 	}
-	return 0, 0, errors.New("not found")
+	return 0, 0, false
 }
 
 func (t table) h2i(hash []byte, column uint64) uint64 {
