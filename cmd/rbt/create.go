@@ -2,6 +2,7 @@ package main
 
 import (
 	"errors"
+	"fmt"
 	"strconv"
 
 	"github.com/sinux-l5d/INFO002-TP1/internal/config"
@@ -20,7 +21,7 @@ func init() {
 				Usage:   "Randomize the index generated",
 			},
 		},
-		ArgsUsage: "<width> <height> <filename>",
+		ArgsUsage: "<width> <height> [filename]",
 		Action: func(c *cli.Context) error {
 			// VALIDATE
 
@@ -29,9 +30,17 @@ func init() {
 			hauteurS := c.Args().Get(1)
 			filename := c.Args().Get(2)
 
-			if largeurS == "" || hauteurS == "" || filename == "" {
+			if largeurS == "" || hauteurS == "" {
 				cli.ShowSubcommandHelp(c)
 				return errors.New("missing arguments")
+			}
+
+			if filename == "" {
+				abc := config.GlobalConfig.AlphabetShort()
+				if abc == "" {
+					abc = strconv.Itoa(len(config.GlobalConfig.Alphabet())) + "c"
+				}
+				filename = fmt.Sprintf("table_a%s_s%d_%sx%s.gob", abc, config.GlobalConfig.Size, largeurS, hauteurS)
 			}
 
 			largeur, err := strconv.ParseUint(largeurS, 10, 64)
