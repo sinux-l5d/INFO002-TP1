@@ -65,28 +65,6 @@ func (tab table) verifie_candidat(hash []byte, t uint64, candidat uint64) (strin
 //   - idx : indice à rechercher dans la dernière (deuxième) colonne
 //   - a et b : (résultats) numéros des premières et dernières lignes dont les
 //     dernières colonnes sont égale à idx
-// func recherche(tab table, hauteur uint64, idx uint64) (uint64, uint64, error) {
-// 	a := uint64(0)
-// 	b := hauteur - 1
-
-// 	for a < b {
-// 		m := (a + b) / 2
-// 		if tab.Data[m][1] < idx {
-// 			a = m + 1
-// 		} else {
-// 			b = m
-// 		}
-// 	}
-// 	if tab.Data[a][1] != idx {
-// 		return 0, 0, errors.New("not found")
-// 	}
-
-//		c := a
-//		for c < hauteur && tab.Data[c][1] == idx {
-//			c++
-//		}
-//		return a, c - 1, nil
-//	}
 func recherche(tab table, hauteur uint64, idx uint64) (uint64, uint64, bool) {
 	a := uint64(0)
 	b := hauteur - 1
