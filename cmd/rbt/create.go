@@ -16,16 +16,15 @@ func init() {
 		Usage: "Create a rainbow table",
 		Flags: []cli.Flag{
 			&cli.BoolFlag{
-				Name:    "random",
-				Aliases: []string{"r"},
-				Usage:   "Randomize the index generated",
+				Name:  "ordered",
+				Usage: "Do not randomize the index generated, use a counter instead",
 			},
 		},
 		ArgsUsage: "<width> <height> [filename]",
 		Action: func(c *cli.Context) error {
 			// VALIDATE
 
-			random := c.Bool("random")
+			ordered := c.Bool("ordered")
 			largeurS := c.Args().Get(0)
 			hauteurS := c.Args().Get(1)
 			filename := c.Args().Get(2)
@@ -55,7 +54,7 @@ func init() {
 
 			// CREATE TABLE
 
-			t, err := table.NewTable(config.GlobalConfig, largeur, hauteur, random)
+			t, err := table.NewTable(config.GlobalConfig, largeur, hauteur, !ordered)
 			if err != nil {
 				return err
 			}

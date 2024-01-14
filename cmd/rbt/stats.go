@@ -24,7 +24,6 @@ func init() {
 				if err != nil {
 					return fmt.Errorf("cannot load table: %w", err)
 				}
-				fmt.Println(t.Config.String())
 				fmt.Printf("Coverage: %.2f%%", t.Coverage())
 			} else if c.Args().Len() == 2 { // width height
 				widthS := c.Args().Get(0)
@@ -39,7 +38,6 @@ func init() {
 					return fmt.Errorf("cannot parse height: %w", err)
 				}
 
-				fmt.Println(config.GlobalConfig.String())
 				fmt.Printf("Coverage: %.2f%%", table.Coverage(config.GlobalConfig, width, height))
 			} else { // no args, too many args
 				cli.ShowSubcommandHelp(c)
