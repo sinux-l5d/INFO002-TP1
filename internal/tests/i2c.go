@@ -29,13 +29,15 @@ func NewI2CTest(cfg *config.Config, i uint64) (*I2CTest, error) {
 // perform the conversion
 // Math made with the help with ChatGPT, implementation on my own
 func (t *I2CTest) Run() (string, error) {
-	ik := func(i uint64, k int, s int) int {
-		div := math.Pow(float64(s), float64(k))
-		return int(math.Floor(float64(i)/div)) % 26
-	}
 
 	r := ""
 	s := len(t.config.Alphabet())
+
+	ik := func(i uint64, k int, s int) int {
+		div := math.Pow(float64(s), float64(k))
+		return int(math.Floor(float64(i)/div)) % s
+	}
+
 	for k := t.config.Size - 1; k >= 0; k-- {
 		r += string(t.config.Alphabet()[ik(t.i, k, s)])
 

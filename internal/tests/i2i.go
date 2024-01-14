@@ -19,10 +19,6 @@ func NewI2ITest(cfg *config.Config, i uint64, c uint64) (*I2ITest, error) {
 	}, nil
 }
 
-var (
-	hash []byte
-)
-
 func (t *I2ITest) Run() (uint64, error) {
 	i2c, err := NewI2CTest(t.config, t.i)
 	if err != nil {
@@ -39,7 +35,7 @@ func (t *I2ITest) Run() (uint64, error) {
 		return 0, err
 	}
 
-	hash, err = ht.Run()
+	hash, err := ht.Run()
 	if err != nil {
 		return 0, err
 	}
