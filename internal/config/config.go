@@ -56,6 +56,15 @@ func (c Config) Alphabet() string {
 	return c.CustomAlphabet
 }
 
+func (c Config) AlphabetShort() string {
+	for k, v := range alphabets {
+		if c.Alphabet() == v {
+			return k
+		}
+	}
+	return ""
+}
+
 func (c Config) String() string {
 	return fmt.Sprintf("alphabet: %s\nsize: %d\nN: %d\nverbose: %t", c.Alphabet(), c.Size, c.N(), c.Verbose)
 }
