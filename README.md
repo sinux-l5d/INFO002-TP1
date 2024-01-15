@@ -27,16 +27,19 @@ make
 ./bin/rbt info --none ./table_a26A_s4_500x20000.gob # affiche les informations de la table, mais pas son contenu (incompatible avec --all et --max)
 ```
 
-## Question 5
+## Parallélisation
 
+La première version du programme que j'avais écrite est séquentiel. Elle se trouve dans `./internal/table/table_seq.go`.
 
-*Quelle est la complexité (en temps et en espace) de recherche dans une telle table si la table initiale contenait hauteur lignes et largeur colonnes ?*
+Une première version parallèle est trouvable dans le commit f100d35c. Le principe était d'instancier une [goroutine](https://go.dev/tour/concurrency/1) par ligne (donc `largeur` goroutines).
 
-SKIPPED
+Cela fonctionnait pour une taille raisonable de la table, mais pouvais prendre beaucoup de ressources pour une table plus grande. J'ai donc implémenter une [`workers pool`](https://gobyexample.com/worker-pools), qui consiste à instancier un nombre fixe de goroutines (par défaut, autant que l'orinateur a de coeurs) qui vont prendre leurs travail dans une file d'attente implémenté sous forme de channel.
 
-*Comparez cela avec les complexités (en temps et en espace) de la recherche exhaustive et celle du précalcul complet ?*
+Une channel est un type natif de Go qui permet de communiquer entre goroutines, dans un format de données prédéfini. 
 
-SKIPPED
+Le résultat est envoyé dans une autre channel qui est ensuite lue par la goroutine principale, celle qui crée la table.
+
+Voir `./internal/table/table_pll.go` pour plus de détails.
 
 ## Question 8
 
@@ -44,15 +47,11 @@ SKIPPED
 
 Le paramètre t permet de limiter les collisions. Si nous avons moins de collisions, nous augmentons le nombre de valeurs différentes et donc la converture de la table.
 
-## Question 12
-
-*Estimez la complexité de la recherche dans une table arc-en-ciel.*
-
 ## Question 14
 
-Je vais exposer ici les résultats de mon programme, suivant deux version : une version séquentiel, et une parallèle expérimentale tirant partie des goroutines, une fonctionnalité qui s'apparent à des thread légés.
+Je vais exposer ici les résultats de mon programme, suivant deux version : une version séquentiel, et une parallèle tirant partie des goroutines, une fonctionnalité qui s'apparent à des thread légés.
 
-**Pour l'instant, seul la création de la table est parallélisé**
+**Seul la création de la table est parallélisé**
 
 La version séquentiel est compilable avec le tag `seq`.
 
@@ -71,8 +70,6 @@ La version séquentiel est compilable avec le tag `seq`.
 
 `16de25af888480da1af57a71855f3e8c515dcb61 => CODE`
 `dafaa5e15a30ecd52c2d1dc6d1a3d8a0633e67e2 => n00b.`
-
-## Question 15
 
 ## Question 16
 

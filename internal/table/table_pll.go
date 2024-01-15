@@ -20,6 +20,9 @@ type result struct {
 	err         error
 }
 
+// worker is a function that will be run as a goroutine
+// it takes jobs from the jobs channel and sends results to the results channel
+// it will stop when the jobs channel is closed
 func worker(config config.Config, largeur uint64, random bool, jobs <-chan uint64, results chan<- result) {
 	var r result
 	for j := range jobs {
@@ -55,13 +58,15 @@ func NewTable(config config.Config, largeur uint64, hauteur uint64, random bool)
 		}
 		// ensure all T[i] are initialized (although doing so in the collector should work)
 		T[i] = make([]uint64, 2)
-		jobs <- uint64(i)
+		jobs <- uint64(i) // send the index to the worker
 	}
+
 	if config.Verbose {
 		fmt.Printf("\rSending jobs 100%%\n")
 	}
 
-	// Close jobs
+	// Close jobs channel
+	// It will stop the workers when they are done with their current job
 	close(jobs)
 
 	// Collect results
@@ -69,17 +74,22 @@ func NewTable(config config.Config, largeur uint64, hauteur uint64, random bool)
 		if config.Verbose {
 			fmt.Printf("\rProcessing %d%%", uint64(i*100)/hauteur)
 		}
+
 		res := <-results
 		if res.err != nil {
 			return table{}, res.err
 		}
+
+		// We don't need the index the worker have been working on, we'll sort anyway
 		T[i][0] = res.first
 		T[i][1] = res.last
 	}
+
 	if config.Verbose {
 		fmt.Printf("\rProcessing 100%%\n")
 	}
 
+	// Sort based on the last element of each line
 	sort.Slice(T, func(i, j int) bool {
 		return T[i][1] < T[j][1]
 	})
