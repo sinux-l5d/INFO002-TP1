@@ -4,51 +4,80 @@
 package table
 
 import (
+	"fmt"
+	"runtime"
 	"sort"
 
 	"github.com/sinux-l5d/INFO002-TP1/internal/config"
 )
 
+var (
+	workers = runtime.NumCPU()
+)
+
+type result struct {
+	first, last uint64
+	err         error
+}
+
+func worker(config config.Config, largeur uint64, random bool, jobs <-chan uint64, results chan<- result) {
+	var r result
+	for j := range jobs {
+		if random {
+			r.first = index_aleatoire(&config)
+		} else {
+			r.first = uint64(j)
+		}
+		r.last, r.err = nouvelle_chaine(&config, r.first, largeur)
+		results <- r
+	}
+}
+
 func NewTable(config config.Config, largeur uint64, hauteur uint64, random bool) (table, error) {
 	T := make([][]uint64, hauteur)
 
-	// Initial code was sequential, I rewrote it to be concurrent.
-	// with size=2, abc=26, width=1000 and height=2000, I reduced the time from ~19s to ~5s
-	type result struct {
-		index uint64
-		err   error
+	jobs := make(chan uint64, hauteur)
+	results := make(chan result, hauteur)
+
+	if config.Verbose {
+		fmt.Printf("Using %d workers\n", workers)
 	}
 
-	results := make(chan result)
+	// Setup workers
+	for w := 0; w < workers; w++ {
+		go worker(config, largeur, random, jobs, results)
+	}
 
+	// Send jobs
 	for i := range T {
-		go func(idx uint64) {
-			// INIT
-			T[idx] = make([]uint64, 2)
-			if random {
-				T[idx][0] = index_aleatoire(&config)
-			} else {
-				T[idx][0] = uint64(idx)
-			}
-
-			// FILL
-			var err error
-			T[idx][1], err = nouvelle_chaine(&config, T[idx][0], largeur)
-			results <- result{index: idx, err: err}
-		}(uint64(i))
+		if config.Verbose {
+			fmt.Printf("\rSending jobs %d%%", uint64(i*100)/hauteur)
+		}
+		// ensure all T[i] are initialized (although doing so in the collector should work)
+		T[i] = make([]uint64, 2)
+		jobs <- uint64(i)
+	}
+	if config.Verbose {
+		fmt.Printf("\rSending jobs 100%%\n")
 	}
 
-	var errors []error
+	// Close jobs
+	close(jobs)
 
-	for range T {
+	// Collect results
+	for i := range T {
+		if config.Verbose {
+			fmt.Printf("\rProcessing %d%%", uint64(i*100)/hauteur)
+		}
 		res := <-results
 		if res.err != nil {
-			errors = append(errors, res.err)
+			return table{}, res.err
 		}
+		T[i][0] = res.first
+		T[i][1] = res.last
 	}
-
-	if len(errors) > 0 {
-		return table{}, errors[0]
+	if config.Verbose {
+		fmt.Printf("\rProcessing 100%%\n")
 	}
 
 	sort.Slice(T, func(i, j int) bool {
