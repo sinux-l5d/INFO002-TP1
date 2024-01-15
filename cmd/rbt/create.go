@@ -4,6 +4,7 @@ import (
 	"errors"
 	"fmt"
 	"strconv"
+	"time"
 
 	"github.com/sinux-l5d/INFO002-TP1/internal/config"
 	"github.com/sinux-l5d/INFO002-TP1/internal/table"
@@ -53,11 +54,24 @@ func init() {
 			}
 
 			// CREATE TABLE
-
+			start := time.Now()
 			t, err := table.NewTable(config.GlobalConfig, largeur, hauteur, !ordered)
 			if err != nil {
 				return err
 			}
+
+			elasped := time.Since(start)
+			if config.GlobalConfig.Verbose {
+				fmt.Printf("Table created in %s\n", elasped)
+			}
+
+			start = time.Now()
+			defer func() {
+				elasped := time.Since(start)
+				if config.GlobalConfig.Verbose {
+					fmt.Printf("Table saved in %s\n", elasped)
+				}
+			}()
 
 			return t.Save(filename)
 		},

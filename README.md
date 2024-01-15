@@ -7,6 +7,26 @@ Le projet est écrit en Go `1.21.5`. Un Makefile est fourni pour compiler le pro
 La première fois lancez `make download` pour télécharger les dépendances.
 Ensuite lancez `make` pour compiler le projet, le binaire sera dans le dossier `bin`.
 
+Il existe une version sequentielle et une version parallèle (par défaut). Pour compiler la version séquentielle, utilisez `make seq`.
+
+## LFS
+
+Deux tables arc-en-ciel sont fournies : `table_a26A_s4_500x20000.gob` et `table_a40_s5_1000x1000000.gob`. Elles sont stockées avec Git LFS.
+
+Assurez-vous d'avoir [Git LFS](https://git-lfs.com/) installé et configuré sur votre machine avant de cloner le projet. Sinon, lancez `git lfs pull` après avoir cloné le projet.
+
+## Quickstart
+
+```bash
+make
+./bin/rbt -h # toutes les sous-commandes ont une aide
+./bin/rbt -A 26A -s 4 stats 500 20000 # calcul le coverage pour les paramètres donnés
+./bin/rbt -A 26A -s 4 create 500 20000 # si aucun fichier n'est donné, un nom par défaut est généré
+./bin/rbt test hash BEEF # 9DBA3007DE04696303B91C7A87554A9BBC62FCE4
+./bin/rbt crack 9DBA3007DE04696303B91C7A87554A9BBC62FCE4 ./table_a26A_s4_500x20000.gob # BEEF
+./bin/rbt info --none ./table_a26A_s4_500x20000.gob # affiche les informations de la table, mais pas son contenu (incompatible avec --all et --max)
+```
+
 ## Question 5
 
 
@@ -79,5 +99,5 @@ Le sel est une chaine de caractère ajouté au mot de passe qui rend impossible 
 ## Pistes d'amélioration
 
 - [ ] Paralléliser la recherche dans la table
-- [ ] Parallélisation plus intéligente que 1 goroutine par boucle (pool de goroutine/worker ?)
+- [X] Parallélisation plus intéligente que 1 goroutine par boucle (pool de goroutine/worker ?)
 - [ ] Serialiser la table "fait maison" pour ne pas la charger en mémoire pour des commandes simples (stats, info)

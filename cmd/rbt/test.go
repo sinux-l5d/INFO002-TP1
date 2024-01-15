@@ -69,11 +69,15 @@ var (
 			}
 
 			if c.Bool("lowercase") {
-				fmt.Printf("%x (%s)\n", r, toHash)
+				fmt.Printf("%x", r)
 				return nil
 			}
 
-			fmt.Printf("%X (%s)\n", r, toHash)
+			fmt.Printf("%X", r)
+
+			if config.GlobalConfig.Verbose {
+				fmt.Printf(" (%s)\n", toHash)
+			}
 			return nil
 		},
 	}

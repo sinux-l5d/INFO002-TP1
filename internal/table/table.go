@@ -23,13 +23,6 @@ func nouvelle_chaine(config *config.Config, idx uint64, largeur uint64) (uint64,
 		if err != nil {
 			return 0, err
 		}
-
-		if config.Verbose {
-			fmt.Printf("i2i(%d,%d)=%d | ", idx, i+1, id)
-		}
-	}
-	if config.Verbose {
-		fmt.Printf("i2i(%d,%d)=%d\n", idx, largeur, id)
 	}
 
 	return id, nil

@@ -1,7 +1,6 @@
 package tests
 
 import (
-	"fmt"
 	"math"
 
 	"github.com/sinux-l5d/INFO002-TP1/internal/config"
@@ -40,10 +39,6 @@ func (t *I2CTest) Run() (string, error) {
 
 	for k := t.config.Size - 1; k >= 0; k-- {
 		r += string(t.config.Alphabet()[ik(t.i, k, s)])
-
-		if t.config.Verbose {
-			fmt.Printf("i2c(%d,%d,%d)=%d=%s\n", t.i, k, s, ik(t.i, k, s), r[len(r)-1:])
-		}
 	}
 
 	return r, nil
